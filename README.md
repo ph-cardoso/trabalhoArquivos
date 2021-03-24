@@ -1,6 +1,5 @@
 # trabalhoArquivos
-Trabalho de arquivos da faculdade
-Orientações:
+Trabalho de arquivos da faculdade - Orientações:
 Utilizando o conceito de arquivos em C, realize a criação um arquivo que contenha o registros de operações de um banco. 
 Esse banco mantém um cadastro de clientes (clientes) contendo:
 
