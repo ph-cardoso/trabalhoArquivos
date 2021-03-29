@@ -1,0 +1,4 @@
+Movimentacoes do dia 240321
+conta: 1; operacao: 1; valor: 1000.00
+conta: 1; operacao: 2; valor: 600.00
+conta: 2; operacao: 1; valor: 8000.00

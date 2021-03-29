@@ -1,17 +1,18 @@
 # trabalhoArquivos
+
 Trabalho de arquivos da faculdade - Orientações:
-Utilizando o conceito de arquivos em C, realize a criação um arquivo que contenha o registros de operações de um banco. 
+Utilizando o conceito de arquivos em C, realize a criação um arquivo que contenha o registros de operações de um banco.
 Esse banco mantém um cadastro de clientes (clientes) contendo:
 
-O número da conta (inteiro, entre 1 e 5OO); 
-Nome do cliente (32 caracteres); 
-Data de abertura da conta (ddmmaa); 
-Tipo da conta (1 - simples ou 2 - especial); 
+O número da conta (inteiro, entre 1 e 5OO);
+Nome do cliente (32 caracteres);
+Data de abertura da conta (ddmmaa);
+Tipo da conta (1 - simples ou 2 - especial);
 Em caso de conta especial:
 Limite (real);
 Data de vencimento (ddmmaa);
 
-O banco possui um arquivo de movimento (movimento), cujo primeiro registro contém a data do movimento e os demais registros contém o número da conta, o tipo da operação (1 - depósito, 2 - saque) e o valor. 
+O banco possui um arquivo de movimento (movimento), cujo primeiro registro contém a data do movimento e os demais registros contém o número da conta, o tipo da operação (1 - depósito, 2 - saque) e o valor.
 
 Pede-se:
 A) Implemente uma rotina que gere o cadastro de clientes - os dados de cada cliente deverão ser armazenados na posição do arquivo igual ao seu número de conta e a geração do arquivo deverá acontecer de forma direta;
