@@ -66,6 +66,3 @@ int main()
 
     return 0;
 }
-
-//TO-DO: Fazer procedure de consulta
-//TO-DO: Check updateCadastro //Retirando ultima movimentacao 2 vezes
