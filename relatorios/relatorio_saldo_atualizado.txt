@@ -1,12 +1,8 @@
 Numero da conta: 1
 Nome do cliente: ph
-Saldo: 400.00
+Saldo: 300.00
 
 Numero da conta: 2
 Nome do cliente: mark
-Saldo: 700.00
-
-Numero da conta: 2
-Nome do cliente: mark
-Saldo: 700.00
+Saldo: 300.00
 

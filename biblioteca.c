@@ -29,93 +29,114 @@ void clean_stdin()
 {
     int c;
     while ((c = getchar()) != '\n' && c != EOF)
-        ;
+    {
+    };
 }
 
 //Função para cadastrar novos clientes
 int cadastrarClientes(Pessoa cliente, int i)
 {
-    system("cls");
-    FILE *arq;
-    FILE *arq2;
-    int status;
-    char c;
-
-    //TO-DO: Verify account limit
-
-    arq = fopen("./arquivosBin/clientes.bin", "ab");
-    if (arq == NULL)
+    if (i < 500)
     {
-        perror("Erro ao abrir o arquivo");
-        exit(1);
-    }
-    arq2 = fopen("./arquivosTxt/clientes.txt", "a");
-    if (arq2 == NULL)
-    {
-        perror("Erro ao abrir o arquivo");
-        exit(1);
-    }
 
-    while (1)
-    {
-        printf("Digite as informacoes do cliente:\n");
-        cliente.numeroConta = i + 1;
-        cliente.saldo = 0;
+        system("cls");
+        FILE *arq;
+        FILE *arq2;
+        int status;
+        char c;
+
+        //TO-DO: Verify account limit
+
+        arq = fopen("./arquivosBin/clientes.bin", "ab");
+        if (arq == NULL)
+        {
+            perror("Erro ao abrir o arquivo");
+            exit(1);
+        }
+        arq2 = fopen("./arquivosTxt/clientes.txt", "a");
+        if (arq2 == NULL)
+        {
+            perror("Erro ao abrir o arquivo");
+            exit(1);
+        }
+
         while (1)
         {
-            printf("Tipo de conta (1 - Conta Simples; 2 - Conta Especial): ");
-            scanf("%d", &cliente.tipoConta);
-            if (cliente.tipoConta == 1 || cliente.tipoConta == 2)
-                break;
+            printf("Digite as informacoes do cliente:\n");
+            cliente.numeroConta = i + 1;
+            cliente.saldo = 0;
+            while (1)
+            {
+                printf("Tipo de conta (1 - Conta Simples; 2 - Conta Especial): ");
+                scanf("%d", &cliente.tipoConta);
+                if (cliente.tipoConta == 1 || cliente.tipoConta == 2)
+                    break;
+                else
+                    printf("\nTipo de conta invalido! Insira novamente...\n\n");
+            }
+            printf("Nome do cliente: ");
+            clean_stdin();
+            fgets(cliente.nomeCliente, 32, stdin);
+            printf("Data de Abertura (DDMMYY): ");
+            scanf("%d", &cliente.dt_abertura);
+            if (cliente.tipoConta == 2)
+            {
+                printf("Limite: ");
+                scanf("%f", &cliente.limite);
+                printf("Data de Vencimento (DDMMYY): ");
+                scanf("%d", &cliente.dt_vencimento);
+            }
             else
-                printf("\nTipo de conta invalido! Insira novamente...\n\n");
-        }
-        printf("Nome do cliente: ");
-        clean_stdin();
-        fgets(cliente.nomeCliente, 32, stdin);
-        printf("Data de Abertura (DDMMYY): ");
-        scanf("%d", &cliente.dt_abertura);
-        if (cliente.tipoConta == 2)
-        {
-            printf("Limite: ");
-            scanf("%f", &cliente.limite);
-            printf("Data de Vencimento (DDMMYY): ");
-            scanf("%d", &cliente.dt_vencimento);
-        }
-        else
-        {
-            cliente.limite = -1;
-            cliente.dt_vencimento = -1;
-        }
-        //Gravando arquivo .bin
-        status = fwrite(&cliente, sizeof(Pessoa), 1, arq);
-        if (status != 1)
-            puts("Erro ao gravar o arquivo .bin!");
-        else
-            puts("\nArquivo .bin gravado com sucesso!");
+            {
+                cliente.limite = -1;
+                cliente.dt_vencimento = -1;
+            }
+            //Gravando arquivo .bin
+            status = fwrite(&cliente, sizeof(Pessoa), 1, arq);
+            if (status != 1)
+                puts("Erro ao gravar o arquivo .bin!");
+            else
+                puts("\nArquivo .bin gravado com sucesso!");
 
-        //Gravando arquivo .txt
-        fprintf(arq2, "Numero da conta: %d\n", cliente.numeroConta);
-        fprintf(arq2, "Nome do cliente: %s", cliente.nomeCliente);
-        fprintf(arq2, "Data de Abertura: %d\n", cliente.dt_abertura);
-        fprintf(arq2, "Tipo de conta: %d\n", cliente.tipoConta);
-        fprintf(arq2, "Limite: %.2f\n", cliente.limite);
-        fprintf(arq2, "Data de Vencimento: %d\n", cliente.dt_vencimento);
-        fprintf(arq2, "Saldo: %.2f\n\n", cliente.saldo);
-        puts("Arquivo .txt gravado com sucesso!");
+            //Gravando arquivo .txt
+            fprintf(arq2, "Numero da conta: %d\n", cliente.numeroConta);
+            fprintf(arq2, "Nome do cliente: %s", cliente.nomeCliente);
+            fprintf(arq2, "Data de Abertura: %d\n", cliente.dt_abertura);
+            fprintf(arq2, "Tipo de conta: %d\n", cliente.tipoConta);
+            fprintf(arq2, "Limite: %.2f\n", cliente.limite);
+            fprintf(arq2, "Data de Vencimento: %d\n", cliente.dt_vencimento);
+            fprintf(arq2, "Saldo: %.2f\n\n", cliente.saldo);
+            puts("Arquivo .txt gravado com sucesso!");
 
-        printf("\n\nPressione qualquer tecla para cadastrar o proximo cliente ou insira 0 para sair do cadastro...");
-        clean_stdin();
-        i++;
-        c = getchar();
-        if (c == 48)
-            break;
-        system("cls");
+            printf("\n\nPressione qualquer tecla para cadastrar o proximo cliente ou insira 0 para sair do cadastro...");
+            clean_stdin();
+            i++;
+            if (i == 500)
+            {
+                system("cls");
+                printf("Limite de contas atingido!\n");
+                getchar();
+                system("cls");
+                return i;
+            }
+            c = getchar();
+            if (c == 48)
+                break;
+            system("cls");
+        }
+
+        fclose(arq2);
+        fclose(arq);
+        return i;
     }
-
-    fclose(arq2);
-    fclose(arq);
-    return i;
+    else
+    {
+        system("cls");
+        printf("Limite de contas atingido\n");
+        getchar();
+        system("cls");
+        return i;
+    }
 }
 
 //Procedure para gravar dados no arquivo "Movimento"
@@ -347,7 +368,6 @@ int updateCadastro(int indexUpdate)
             }
             j++;
         }
-
         //Gravando no arquivo "cadastroTemp.bin"
         fwrite(&cliente, sizeof(Pessoa), 1, arqCopy);
 
@@ -374,9 +394,9 @@ int updateCadastro(int indexUpdate)
     while (1)
     {
         fread(&cliente, sizeof(Pessoa), 1, arqCopy);
-        fwrite(&cliente, sizeof(Pessoa), 1, arq);
         if (feof(arqCopy))
             break;
+        fwrite(&cliente, sizeof(Pessoa), 1, arq);
     }
 
     puts("\nCadastro atualizado com sucesso!");

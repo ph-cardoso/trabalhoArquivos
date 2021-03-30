@@ -1,4 +1,0 @@
-Informacao referente a conta: 1
-Cliente: ph
-Conta: 1; tipoOperacao: 1; Valor: 600.00; Data: 240321
-Conta: 1; tipoOperacao: 1; Valor: 500.00; Data: 260321
