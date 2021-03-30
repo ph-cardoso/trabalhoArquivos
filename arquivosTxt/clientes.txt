@@ -1,0 +1,24 @@
+Numero da conta: 1
+Nome do cliente: ph
+Data de Abertura: 230321
+Tipo de conta: 1
+Limite: -1.00
+Data de Vencimento: -1
+Saldo: 400.00
+
+Numero da conta: 2
+Nome do cliente: mark
+Data de Abertura: 230321
+Tipo de conta: 1
+Limite: -1.00
+Data de Vencimento: -1
+Saldo: 700.00
+
+Numero da conta: 2
+Nome do cliente: mark
+Data de Abertura: 230321
+Tipo de conta: 1
+Limite: -1.00
+Data de Vencimento: -1
+Saldo: 700.00
+

@@ -1,3 +1,9 @@
+/*
+Trabalho de Arquivos - Estrutura de Dados 1
+Pedro Henrique Lima Cardoso - 22007061
+Mark Davis Faria Almeida Junior - 22006093
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "biblioteca.h"
@@ -18,7 +24,7 @@ int main()
         printf("1. Cadastrar novos clientes\n");
         printf("2. Gravar movimentacoes no arquivo \"Movimento\"\n");
         printf("3. Gerar arquivo de movimentacao a partir de data\n");
-        printf("4. Atualizar cadastro a partir de um arquivo \"Movimento\"\n");
+        printf("4. Atualizar cadastro a partir do arquivo \"Movimento\"\n");
         printf("5. Lista de depositos realizados a partir do numero da conta\n");
         printf("6. Consultar saldo a partir do numero da conta\n");
         printf("0. Sair\n\n");
@@ -43,8 +49,7 @@ int main()
             listDeposito();
             break;
         case 6:
-            system("cls");
-
+            buscaSaldo();
             break;
         case 0:
             exit(0);
@@ -63,6 +68,4 @@ int main()
 }
 
 //TO-DO: Fazer procedure de consulta
-//TO-DO: Fazer procedure que printa o arquivo movimento.bin
-//TO-DO: Fazer procedure que printa o arquivo cadastro.bin
-//TO-DO: Checks e validações
+//TO-DO: Check updateCadastro //Retirando ultima movimentacao 2 vezes

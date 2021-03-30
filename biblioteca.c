@@ -43,13 +43,13 @@ int cadastrarClientes(Pessoa cliente, int i)
 
     //TO-DO: Verify account limit
 
-    arq = fopen("./arquivosBin/cadastros.bin", "ab");
+    arq = fopen("./arquivosBin/clientes.bin", "ab");
     if (arq == NULL)
     {
         perror("Erro ao abrir o arquivo");
         exit(1);
     }
-    arq2 = fopen("./arquivosTxt/cadastros.txt", "a");
+    arq2 = fopen("./arquivosTxt/clientes.txt", "a");
     if (arq2 == NULL)
     {
         perror("Erro ao abrir o arquivo");
@@ -195,19 +195,19 @@ void appendMovimento()
         relatorioMovimento();
 }
 
-//Procedure para criar os arquivos "Cadastro" e "Movimento" no formato .txt e .bin
+//Procedure para criar os arquivos "Clientes" e "Movimento" no formato .txt e .bin
 void createFiles()
 {
     FILE *arq, *arq2;
 
-    //Arquivo "Cadastro"
-    arq = fopen("./arquivosBin/cadastros.bin", "wb");
+    //Arquivo "Clientes"
+    arq = fopen("./arquivosBin/clientes.bin", "wb");
     if (arq == NULL)
     {
         perror("Erro ao criar o arquivo");
         exit(1);
     }
-    arq2 = fopen("./arquivosTxt/cadastros.txt", "w");
+    arq2 = fopen("./arquivosTxt/clientes.txt", "w");
     if (arq2 == NULL)
     {
         perror("Erro ao criar o arquivo");
@@ -231,6 +231,33 @@ void createFiles()
     }
     fclose(arq);
     fclose(arq2);
+
+    //Relatório de depósitos
+    arq = fopen("./relatorios/relatorio_depositos.txt", "w");
+    if (arq == NULL)
+    {
+        perror("Erro ao abrir o arquivo");
+        exit(1);
+    }
+    fclose(arq);
+
+    //Relatório de movimentações a partir de data
+    arq = fopen("./relatorios/relatorio_movimentacao.txt", "w");
+    if (arq == NULL)
+    {
+        perror("Erro ao abrir o arquivo");
+        exit(1);
+    }
+    fclose(arq);
+
+    //Relatório de saldo atualizado após update
+    arq = fopen("./relatorios/relatorio_saldo_atualizado.txt", "w");
+    if (arq == NULL)
+    {
+        perror("Erro ao abrir o arquivo");
+        exit(1);
+    }
+    fclose(arq);
 }
 
 //Gera um relatório de movimentações a partir de uma data
@@ -263,7 +290,7 @@ void relatorioMovimento()
 int updateCadastro(int indexUpdate)
 {
     system("cls");
-    int n, data, j = indexUpdate;
+    int j;
     FILE *arq, *arqCopy, *arqMovimento, *arqTxt, *arqRelatorio;
     Pessoa cliente;
     Movimento mv;
@@ -274,7 +301,7 @@ int updateCadastro(int indexUpdate)
         perror("Erro ao abrir o arquivo");
         exit(1);
     }
-    arq = fopen("./arquivosBin/cadastro.bin", "rb");
+    arq = fopen("./arquivosBin/clientes.bin", "rb");
     if (arq == NULL)
     {
         perror("Erro ao abrir o arquivo");
@@ -286,7 +313,7 @@ int updateCadastro(int indexUpdate)
         perror("Erro ao criar o arquivo");
         exit(1);
     }
-    arqTxt = fopen("./arquivosTxt/cadastro.txt", "w");
+    arqTxt = fopen("./arquivosTxt/clientes.txt", "w");
     if (arqTxt == NULL)
     {
         perror("Erro ao recriar o arquivo");
@@ -301,129 +328,55 @@ int updateCadastro(int indexUpdate)
 
     while (1)
     {
-        printf("1 - Atualizar cadastro com base em TODAS as movimentacoes\n");
-        printf("2 - Atualizar cadastro com base nas movimentacoes de uma data especifica\n");
-        printf("Opcao: ");
-        scanf("%d", &n);
-
-        if (n == 1)
-        {
-            while (1)
-            {
-                fread(&cliente, sizeof(Pessoa), 1, arq);
-                while (1)
-                {
-                    j = indexUpdate;
-                    fread(&mv, sizeof(Movimento), 1, arqMovimento);
-                    if (mv.nConta == cliente.numeroConta)
-                    {
-                        if (mv.tipoMovimentacao == 1)
-                            cliente.saldo += mv.valor;
-                        if (mv.tipoMovimentacao == 2)
-                            cliente.saldo -= mv.valor;
-                    }
-                    j++;
-                    if (feof(arqMovimento))
-                        break;
-                }
-                fseek(arqMovimento, sizeof(Movimento) * indexUpdate, SEEK_SET); //Volta para o começo do arquivo movimento.bin
-
-                //Gravando no arquivo "cadastroTemp.bin"
-                fwrite(&cliente, sizeof(Pessoa), 1, arqCopy);
-
-                //Regravando no arquivo "cadastro.txt"
-                fprintf(arqTxt, "Numero da conta: %d\n", cliente.numeroConta);
-                fprintf(arqTxt, "Nome do cliente: %s", cliente.nomeCliente);
-                fprintf(arqTxt, "Data de Abertura: %d\n", cliente.dt_abertura);
-                fprintf(arqTxt, "Tipo de conta: %d\n", cliente.tipoConta);
-                fprintf(arqTxt, "Limite: %.2f\n", cliente.limite);
-                fprintf(arqTxt, "Data de Vencimento: %d\n", cliente.dt_vencimento);
-                fprintf(arqTxt, "Saldo: %.2f\n\n", cliente.saldo);
-
-                //Gerando relatório de saldo atualizado
-                fprintf(arqRelatorio, "Numero da conta: %d\n", cliente.numeroConta);
-                fprintf(arqRelatorio, "Nome do cliente: %s", cliente.nomeCliente);
-                fprintf(arqRelatorio, "Saldo: %.2f\n\n", cliente.saldo);
-
-                if (feof(arq))
-                    break;
-            }
-
-            //Passando informações de "cadastroTemp.bin" para "cadastro.bin"
-            fclose(arq);
-            arq = fopen("./arquivosBin/cadastro.bin", "wb");
-            fseek(arqCopy, 0, SEEK_SET); //Volta para o começo do arquivo cadastroTemp.bin
-
-            while (1)
-            {
-                fread(&cliente, sizeof(Pessoa), 1, arqCopy);
-                fwrite(&cliente, sizeof(Pessoa), 1, arq);
-                if (feof(arqCopy))
-                    break;
-            }
-
+        fseek(arqMovimento, sizeof(Movimento) * indexUpdate, SEEK_SET); //Volta para o começo do arquivo movimento.bin
+        fread(&cliente, sizeof(Pessoa), 1, arq);
+        if (feof(arq))
             break;
-        }
-        if (n == 2)
+        j = indexUpdate;
+        while (1)
         {
-            printf("Digite a data: ");
-            scanf("%d", &data);
-            while (1)
+            fread(&mv, sizeof(Movimento), 1, arqMovimento);
+            if (feof(arqMovimento))
+                break;
+            if (mv.nConta == cliente.numeroConta)
             {
-                fread(&cliente, sizeof(Pessoa), 1, arq);
-                while (1)
-                {
-                    fread(&mv, sizeof(Movimento), 1, arqMovimento);
-                    if (mv.nConta == cliente.numeroConta && mv.dt_movimentacao == data)
-                    {
-                        if (mv.tipoMovimentacao == 1)
-                            cliente.saldo += mv.valor;
-                        if (mv.tipoMovimentacao == 2)
-                            cliente.saldo -= mv.valor;
-                    }
-                    if (feof(arqMovimento))
-                        break;
-                }
-                fseek(arqMovimento, 0, SEEK_SET); //Volta para o começo do arquivo movimento.bin
-
-                //Gravando no arquivo "cadastroTemp.bin"
-                fwrite(&cliente, sizeof(Pessoa), 1, arqCopy);
-
-                //Regravando no arquivo "cadastro.txt"
-                fprintf(arqTxt, "Numero da conta: %d\n", cliente.numeroConta);
-                fprintf(arqTxt, "Nome do cliente: %s", cliente.nomeCliente);
-                fprintf(arqTxt, "Data de Abertura: %d\n", cliente.dt_abertura);
-                fprintf(arqTxt, "Tipo de conta: %d\n", cliente.tipoConta);
-                fprintf(arqTxt, "Limite: %.2f\n", cliente.limite);
-                fprintf(arqTxt, "Data de Vencimento: %d\n", cliente.dt_vencimento);
-                fprintf(arqTxt, "Saldo: %.2f\n\n", cliente.saldo);
-
-                //Gerando relatório de saldo atualizado
-                fprintf(arqRelatorio, "Numero da conta: %d\n", cliente.numeroConta);
-                fprintf(arqRelatorio, "Nome do cliente: %s", cliente.nomeCliente);
-                fprintf(arqRelatorio, "Saldo: %.2f\n\n", cliente.saldo);
-
-                if (feof(arq))
-                    break;
+                if (mv.tipoMovimentacao == 1)
+                    cliente.saldo += mv.valor;
+                if (mv.tipoMovimentacao == 2)
+                    cliente.saldo -= mv.valor;
             }
-
-            //Passando informações de "cadastroTemp.bin" para "cadastro.bin"
-            fclose(arq);
-            arq = fopen("./arquivosBin/cadastro.bin", "wb");
-            fseek(arqCopy, 0, SEEK_SET); //Volta para o começo do arquivo cadastroTemp.bin
-
-            while (1)
-            {
-                fread(&cliente, sizeof(Pessoa), 1, arqCopy);
-                fwrite(&cliente, sizeof(Pessoa), 1, arq);
-                if (feof(arqCopy))
-                    break;
-            }
-
-            break;
+            j++;
         }
 
-        puts("\nOpcao invalida! Insira novamente...\n\n");
+        //Gravando no arquivo "cadastroTemp.bin"
+        fwrite(&cliente, sizeof(Pessoa), 1, arqCopy);
+
+        //Regravando no arquivo "clientes.txt"
+        fprintf(arqTxt, "Numero da conta: %d\n", cliente.numeroConta);
+        fprintf(arqTxt, "Nome do cliente: %s", cliente.nomeCliente);
+        fprintf(arqTxt, "Data de Abertura: %d\n", cliente.dt_abertura);
+        fprintf(arqTxt, "Tipo de conta: %d\n", cliente.tipoConta);
+        fprintf(arqTxt, "Limite: %.2f\n", cliente.limite);
+        fprintf(arqTxt, "Data de Vencimento: %d\n", cliente.dt_vencimento);
+        fprintf(arqTxt, "Saldo: %.2f\n\n", cliente.saldo);
+
+        //Gerando relatório de saldo atualizado
+        fprintf(arqRelatorio, "Numero da conta: %d\n", cliente.numeroConta);
+        fprintf(arqRelatorio, "Nome do cliente: %s", cliente.nomeCliente);
+        fprintf(arqRelatorio, "Saldo: %.2f\n\n", cliente.saldo);
+    }
+
+    //Passando informações de "cadastroTemp.bin" para "clientes.bin"
+    fclose(arq);
+    arq = fopen("./arquivosBin/clientes.bin", "wb");
+    fseek(arqCopy, 0, SEEK_SET); //Volta para o começo do arquivo cadastroTemp.bin
+
+    while (1)
+    {
+        fread(&cliente, sizeof(Pessoa), 1, arqCopy);
+        fwrite(&cliente, sizeof(Pessoa), 1, arq);
+        if (feof(arqCopy))
+            break;
     }
 
     puts("\nCadastro atualizado com sucesso!");
@@ -457,7 +410,7 @@ void listDeposito()
         perror("Erro ao abrir o arquivo");
         exit(1);
     }
-    arq3 = fopen("./arquivosBin/cadastro.bin", "rb");
+    arq3 = fopen("./arquivosBin/clientes.bin", "rb");
     if (arq3 == NULL)
     {
         perror("Erro ao abrir o arquivo");
@@ -490,8 +443,8 @@ void listDeposito()
         fread(&mv, sizeof(Movimento), 1, arq);
         if (mv.nConta == numero_conta && mv.tipoMovimentacao == 1)
         {
-            fprintf(arq2, "Conta: %d; tipoOperacao: %d; Valor: %.2f\n", mv.nConta, mv.tipoMovimentacao, mv.valor);
-            printf("Conta: %d; tipoOperacao: %d; Valor: %.2f\n", mv.nConta, mv.tipoMovimentacao, mv.valor);
+            fprintf(arq2, "Conta: %d; tipoOperacao: %d; Valor: %.2f; Data: %d\n", mv.nConta, mv.tipoMovimentacao, mv.valor, mv.dt_movimentacao);
+            printf("Conta: %d; tipoOperacao: %d; Valor: %.2f; Data: %d\n", mv.nConta, mv.tipoMovimentacao, mv.valor, mv.dt_movimentacao);
         }
         if (feof(arq))
             break;
@@ -499,4 +452,50 @@ void listDeposito()
 
     fclose(arq);
     fclose(arq2);
+}
+
+void buscaSaldo()
+{
+    int conta;
+    char c;
+    Pessoa cliente;
+    FILE *arq;
+
+    arq = fopen("./arquivosBin/clientes.bin", "rb");
+    if (arq == NULL)
+    {
+        perror("Erro ao abrir o arquivo");
+        exit(1);
+    }
+
+    while (1)
+    {
+        system("cls");
+        printf("Digite o numero da conta a ser consultada: ");
+        scanf("%d", &conta);
+        fseek(arq, 0, SEEK_SET);
+        while (1)
+        {
+            fread(&cliente, sizeof(Pessoa), 1, arq);
+            if (cliente.numeroConta == conta)
+            {
+                printf("\n\nSaldo da conta %d: %.2f", cliente.numeroConta, cliente.saldo);
+                break;
+            }
+            if (feof(arq))
+            {
+                printf("\n\nConta inexistente");
+                break;
+            }
+        }
+
+        printf("\n\nPressione qualquer tecla para realizar outra consulta ou insira 0 para voltar ao menu...");
+        clean_stdin();
+        c = getchar();
+        if (c == 48)
+            break;
+        system("cls");
+    }
+
+    fclose(arq);
 }
